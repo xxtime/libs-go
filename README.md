@@ -1,4 +1,10 @@
-## libsgo http demo
+## INSTALL
+```bash
+go get github.com/zlabwork/libsgo
+```
+
+
+## HTTP DEMO
 ```golang
 var libsHttp = libsgo.NewHttpLib()
 resp, err := libsHttp.RequestGet("http://localhost")
