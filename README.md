@@ -30,3 +30,43 @@ if err != nil {
 }
 log.Println(result.Message)
 ```
+
+## RSA DEMO
+```golang
+var publicKey = []byte(`
+-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDiJd7wtvimoaGKi2D5FUrOofS/
+....
+xlDpu9EbRSrqJ26wIQIDAQAB
+-----END PUBLIC KEY-----
+`)
+
+var privateKey = []byte(`
+-----BEGIN RSA PRIVATE KEY-----
+MIICXQIBAAKBgQDiJd7wtvimoaGKi2D5FUrOofS/Zbeh/cQYKr7hIECcN9aN6VwL
+....
+ZtG4demvUioV01lEzddYt7pmtE182tlnVlb+7TWVH7SP
+-----END RSA PRIVATE KEY-----
+`)
+
+testData := []byte("this is test data")
+
+// set keys
+libsRsa := libsgo.NewRsaLib()
+libsRsa.SetPrivateKey(privateKey)
+libsRsa.SetPublicKey(publicKey)
+
+// encrypt with public key
+ciphertext, err := libsRsa.Encrypt(testData)
+if err != nil {
+    log.Println(err)
+}
+log.Println("ciphertext bytes data:", ciphertext)
+
+// decrypt with private key
+plaintext, err := libsRsa.Decrypt(ciphertext)
+if err != nil {
+    log.Println(err)
+}
+log.Println("plaintext:", string(plaintext))
+```
