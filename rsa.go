@@ -1,20 +1,24 @@
 package libsgo
 
 import (
+	"errors"
 	"encoding/pem"
 	"crypto/rsa"
 	"crypto/rand"
 	"crypto/x509"
-	"errors"
+	"crypto/sha1"
 )
 
 func NewRsaLib() *rsaLib {
-	return &rsaLib{}
+	return &rsaLib{
+		padding: OPENSSL_PKCS1_PADDING,
+	}
 }
 
 type rsaLib struct {
-	priKey *rsa.PrivateKey
-	pubKey *rsa.PublicKey
+	priKey  *rsa.PrivateKey
+	pubKey  *rsa.PublicKey
+	padding int
 }
 
 func (r *rsaLib) GeneratePrivateKey(bits int) (*rsa.PrivateKey, error) {
@@ -23,6 +27,10 @@ func (r *rsaLib) GeneratePrivateKey(bits int) (*rsa.PrivateKey, error) {
 		return nil, err
 	}
 	return key, nil
+}
+
+func (r *rsaLib) SetPadding(padding int) {
+	r.padding = padding
 }
 
 func (r *rsaLib) GetPrivateKey() *rsa.PrivateKey {
@@ -67,12 +75,22 @@ func (r *rsaLib) Encrypt(plaintext []byte) ([]byte, error) {
 	if r.pubKey == nil {
 		return nil, errors.New("no public key")
 	}
-	return rsa.EncryptPKCS1v15(rand.Reader, r.pubKey, plaintext)
+	switch r.padding {
+	case OPENSSL_PKCS1_PADDING:
+		return rsa.EncryptPKCS1v15(rand.Reader, r.pubKey, plaintext)
+	default:
+		return rsa.EncryptOAEP(sha1.New(), rand.Reader, r.pubKey, plaintext, nil)
+	}
 }
 
 func (r *rsaLib) Decrypt(ciphertext []byte) ([]byte, error) {
 	if r.priKey == nil {
 		return nil, errors.New("no private key")
 	}
-	return rsa.DecryptPKCS1v15(rand.Reader, r.priKey, ciphertext)
+	switch r.padding {
+	case OPENSSL_PKCS1_PADDING:
+		return rsa.DecryptPKCS1v15(rand.Reader, r.priKey, ciphertext)
+	default:
+		return rsa.DecryptOAEP(sha1.New(), rand.Reader, r.priKey, ciphertext, nil)
+	}
 }
