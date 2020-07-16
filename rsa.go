@@ -3,10 +3,12 @@ package libsgo
 import (
 	"errors"
 	"encoding/pem"
+	"crypto"
 	"crypto/rsa"
 	"crypto/rand"
 	"crypto/x509"
 	"crypto/sha1"
+	"crypto/sha256"
 )
 
 func NewRsaLib() *rsaLib {
@@ -93,4 +95,34 @@ func (r *rsaLib) Decrypt(ciphertext []byte) ([]byte, error) {
 	default:
 		return rsa.DecryptOAEP(sha1.New(), rand.Reader, r.priKey, ciphertext, nil)
 	}
+}
+
+func (r *rsaLib) SignWithSha1(data []byte) ([]byte, error) {
+	h := sha1.New()
+	h.Write(data)
+	return rsa.SignPKCS1v15(rand.Reader, r.priKey, crypto.SHA1, h.Sum(nil))
+}
+
+func (r *rsaLib) SignWithSha256(data []byte) ([]byte, error) {
+	h := sha256.New()
+	h.Write(data)
+	return rsa.SignPKCS1v15(rand.Reader, r.priKey, crypto.SHA256, h.Sum(nil))
+}
+
+func (r *rsaLib) SignVerifySha1(data []byte, sign []byte) bool {
+	h := sha1.New()
+	h.Write(data)
+	if err := rsa.VerifyPKCS1v15(r.pubKey, crypto.SHA1, h.Sum(nil), sign); err != nil {
+		return false
+	}
+	return true
+}
+
+func (r *rsaLib) SignVerifySha256(data []byte, sign []byte) bool {
+	h := sha256.New()
+	h.Write(data)
+	if err := rsa.VerifyPKCS1v15(r.pubKey, crypto.SHA256, h.Sum(nil), sign); err != nil {
+		return false
+	}
+	return true
 }
