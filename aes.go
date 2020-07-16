@@ -16,8 +16,20 @@ import (
  * @docs http://www.361way.com/golang-rsa-aes/5828.html
  */
 
-func AesEncryptCFB(key []byte, plaintext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
+func NewAesLib() *aesLib {
+	return &aesLib{}
+}
+
+type aesLib struct {
+	secKey []byte
+}
+
+func (lib *aesLib) SetSecretKey(secretKey []byte) {
+	lib.secKey = secretKey
+}
+
+func (lib *aesLib) EncryptCFB(plaintext []byte) ([]byte, error) {
+	block, err := aes.NewCipher(lib.secKey)
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +46,8 @@ func AesEncryptCFB(key []byte, plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func AesDecryptCFB(key []byte, ciphertext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
+func (lib *aesLib) DecryptCFB(ciphertext []byte) ([]byte, error) {
+	block, err := aes.NewCipher(lib.secKey)
 	if err != nil {
 		return nil, err
 	}
@@ -53,13 +65,13 @@ func AesDecryptCFB(key []byte, ciphertext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func AesEncryptCBC(key []byte, plaintext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
+func (lib *aesLib) EncryptCBC(plaintext []byte) ([]byte, error) {
+	block, err := aes.NewCipher(lib.secKey)
 	if err != nil {
 		return nil, err
 	}
 
-	plaintext = PKCS7Padding(plaintext, aes.BlockSize)
+	plaintext = pkcs7Padding(plaintext, aes.BlockSize)
 
 	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
 	iv := ciphertext[:aes.BlockSize]
@@ -73,8 +85,8 @@ func AesEncryptCBC(key []byte, plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func AesDecryptCBC(key []byte, ciphertext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
+func (lib *aesLib) DecryptCBC(ciphertext []byte) ([]byte, error) {
+	block, err := aes.NewCipher(lib.secKey)
 	if err != nil {
 		return nil, err
 	}
@@ -92,13 +104,13 @@ func AesDecryptCBC(key []byte, ciphertext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func PKCS7Padding(ciphertext []byte, blockSize int) []byte {
+func pkcs7Padding(ciphertext []byte, blockSize int) []byte {
 	padding := blockSize - len(ciphertext)%blockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
 	return append(ciphertext, padtext...)
 }
 
-func PKCS7UnPadding(origData []byte) []byte {
+func pkcs7UnPadding(origData []byte) []byte {
 	length := len(origData)
 	unpadding := int(origData[length-1])
 	return origData[:(length - unpadding)]
