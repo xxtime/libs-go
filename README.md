@@ -31,6 +31,28 @@ if err != nil {
 log.Println(result.Message)
 ```
 
+
+## AES
+```golang
+libsAes := libsgo.NewAesLib()
+libsAes.SetSecretKey([]byte("ceb50761f4c378e1bc2f8a7585fb572d"))
+text := []byte("this is test data")
+
+// encrypt
+ciphertext, err := libsAes.EncryptCBC(text)
+if err != nil {
+	fmt.Println(err)
+}
+
+// decrypt
+plaintext, err := libsAes.DecryptCBC(ciphertext)
+if err != nil {
+	fmt.Println(err)
+}
+fmt.Println(string(plaintext))
+```
+
+
 ## RSA DEMO
 ```golang
 var publicKey = []byte(`
