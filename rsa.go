@@ -11,19 +11,19 @@ import (
 	"crypto/sha256"
 )
 
-func NewRsaLib() *rsaLib {
-	return &rsaLib{
+func NewRsaLib() *RsaLib {
+	return &RsaLib{
 		padding: OPENSSL_PKCS1_PADDING,
 	}
 }
 
-type rsaLib struct {
+type RsaLib struct {
 	priKey  *rsa.PrivateKey
 	pubKey  *rsa.PublicKey
 	padding int
 }
 
-func (r *rsaLib) GeneratePrivateKey(bits int) (*rsa.PrivateKey, error) {
+func (lib *RsaLib) GeneratePrivateKey(bits int) (*rsa.PrivateKey, error) {
 	key, err := rsa.GenerateKey(rand.Reader, bits)
 	if err != nil {
 		return nil, err
@@ -31,15 +31,15 @@ func (r *rsaLib) GeneratePrivateKey(bits int) (*rsa.PrivateKey, error) {
 	return key, nil
 }
 
-func (r *rsaLib) SetPadding(padding int) {
-	r.padding = padding
+func (lib *RsaLib) SetPadding(padding int) {
+	lib.padding = padding
 }
 
-func (r *rsaLib) GetPrivateKey() *rsa.PrivateKey {
-	return r.priKey
+func (lib *RsaLib) GetPrivateKey() *rsa.PrivateKey {
+	return lib.priKey
 }
 
-func (r *rsaLib) SetPrivateKey(privateKey []byte) error {
+func (lib *RsaLib) SetPrivateKey(privateKey []byte) error {
 	block, _ := pem.Decode(privateKey)
 	if block == nil || block.Type != "RSA PRIVATE KEY" {
 		return errors.New("failed to decode PEM block containing private key")
@@ -50,15 +50,15 @@ func (r *rsaLib) SetPrivateKey(privateKey []byte) error {
 		return err
 	}
 
-	r.priKey = priKey
+	lib.priKey = priKey
 	return nil
 }
 
-func (r *rsaLib) GetPublicKey() *rsa.PublicKey {
-	return r.pubKey
+func (lib *RsaLib) GetPublicKey() *rsa.PublicKey {
+	return lib.pubKey
 }
 
-func (r *rsaLib) SetPublicKey(publicKey []byte) error {
+func (lib *RsaLib) SetPublicKey(publicKey []byte) error {
 	block, _ := pem.Decode(publicKey)
 	if block == nil || block.Type != "PUBLIC KEY" {
 		return errors.New("failed to decode PEM block containing public key")
@@ -69,59 +69,59 @@ func (r *rsaLib) SetPublicKey(publicKey []byte) error {
 		return err
 	}
 
-	r.pubKey = pubInterface.(*rsa.PublicKey)
+	lib.pubKey = pubInterface.(*rsa.PublicKey)
 	return nil
 }
 
-func (r *rsaLib) Encrypt(plaintext []byte) ([]byte, error) {
-	if r.pubKey == nil {
+func (lib *RsaLib) Encrypt(plaintext []byte) ([]byte, error) {
+	if lib.pubKey == nil {
 		return nil, errors.New("no public key")
 	}
-	switch r.padding {
+	switch lib.padding {
 	case OPENSSL_PKCS1_PADDING:
-		return rsa.EncryptPKCS1v15(rand.Reader, r.pubKey, plaintext)
+		return rsa.EncryptPKCS1v15(rand.Reader, lib.pubKey, plaintext)
 	default:
-		return rsa.EncryptOAEP(sha1.New(), rand.Reader, r.pubKey, plaintext, nil)
+		return rsa.EncryptOAEP(sha1.New(), rand.Reader, lib.pubKey, plaintext, nil)
 	}
 }
 
-func (r *rsaLib) Decrypt(ciphertext []byte) ([]byte, error) {
-	if r.priKey == nil {
+func (lib *RsaLib) Decrypt(ciphertext []byte) ([]byte, error) {
+	if lib.priKey == nil {
 		return nil, errors.New("no private key")
 	}
-	switch r.padding {
+	switch lib.padding {
 	case OPENSSL_PKCS1_PADDING:
-		return rsa.DecryptPKCS1v15(rand.Reader, r.priKey, ciphertext)
+		return rsa.DecryptPKCS1v15(rand.Reader, lib.priKey, ciphertext)
 	default:
-		return rsa.DecryptOAEP(sha1.New(), rand.Reader, r.priKey, ciphertext, nil)
+		return rsa.DecryptOAEP(sha1.New(), rand.Reader, lib.priKey, ciphertext, nil)
 	}
 }
 
-func (r *rsaLib) SignWithSha1(data []byte) ([]byte, error) {
+func (lib *RsaLib) SignWithSha1(data []byte) ([]byte, error) {
 	h := sha1.New()
 	h.Write(data)
-	return rsa.SignPKCS1v15(rand.Reader, r.priKey, crypto.SHA1, h.Sum(nil))
+	return rsa.SignPKCS1v15(rand.Reader, lib.priKey, crypto.SHA1, h.Sum(nil))
 }
 
-func (r *rsaLib) SignWithSha256(data []byte) ([]byte, error) {
+func (lib *RsaLib) SignWithSha256(data []byte) ([]byte, error) {
 	h := sha256.New()
 	h.Write(data)
-	return rsa.SignPKCS1v15(rand.Reader, r.priKey, crypto.SHA256, h.Sum(nil))
+	return rsa.SignPKCS1v15(rand.Reader, lib.priKey, crypto.SHA256, h.Sum(nil))
 }
 
-func (r *rsaLib) SignVerifySha1(data []byte, sign []byte) bool {
+func (lib *RsaLib) SignVerifySha1(data []byte, sign []byte) bool {
 	h := sha1.New()
 	h.Write(data)
-	if err := rsa.VerifyPKCS1v15(r.pubKey, crypto.SHA1, h.Sum(nil), sign); err != nil {
+	if err := rsa.VerifyPKCS1v15(lib.pubKey, crypto.SHA1, h.Sum(nil), sign); err != nil {
 		return false
 	}
 	return true
 }
 
-func (r *rsaLib) SignVerifySha256(data []byte, sign []byte) bool {
+func (lib *RsaLib) SignVerifySha256(data []byte, sign []byte) bool {
 	h := sha256.New()
 	h.Write(data)
-	if err := rsa.VerifyPKCS1v15(r.pubKey, crypto.SHA256, h.Sum(nil), sign); err != nil {
+	if err := rsa.VerifyPKCS1v15(lib.pubKey, crypto.SHA256, h.Sum(nil), sign); err != nil {
 		return false
 	}
 	return true

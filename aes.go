@@ -16,19 +16,19 @@ import (
  * @docs http://www.361way.com/golang-rsa-aes/5828.html
  */
 
-func NewAesLib() *aesLib {
-	return &aesLib{}
+func NewAesLib() *AesLib {
+	return &AesLib{}
 }
 
-type aesLib struct {
+type AesLib struct {
 	secKey []byte
 }
 
-func (lib *aesLib) SetSecretKey(secretKey []byte) {
+func (lib *AesLib) SetSecretKey(secretKey []byte) {
 	lib.secKey = secretKey
 }
 
-func (lib *aesLib) EncryptCFB(plaintext []byte) ([]byte, error) {
+func (lib *AesLib) EncryptCFB(plaintext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(lib.secKey)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (lib *aesLib) EncryptCFB(plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *aesLib) DecryptCFB(ciphertext []byte) ([]byte, error) {
+func (lib *AesLib) DecryptCFB(ciphertext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(lib.secKey)
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (lib *aesLib) DecryptCFB(ciphertext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *aesLib) EncryptCBC(plaintext []byte) ([]byte, error) {
+func (lib *AesLib) EncryptCBC(plaintext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(lib.secKey)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (lib *aesLib) EncryptCBC(plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *aesLib) DecryptCBC(ciphertext []byte) ([]byte, error) {
+func (lib *AesLib) DecryptCBC(ciphertext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(lib.secKey)
 	if err != nil {
 		return nil, err
