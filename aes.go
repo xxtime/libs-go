@@ -21,15 +21,10 @@ func NewAesLib() *AesLib {
 }
 
 type AesLib struct {
-	secKey []byte
 }
 
-func (lib *AesLib) SetSecretKey(secretKey []byte) {
-	lib.secKey = secretKey
-}
-
-func (lib *AesLib) EncryptCFB(plaintext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(lib.secKey)
+func (lib *AesLib) EncryptCFB(key []byte, plaintext []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
@@ -46,8 +41,8 @@ func (lib *AesLib) EncryptCFB(plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) DecryptCFB(ciphertext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(lib.secKey)
+func (lib *AesLib) DecryptCFB(key []byte, ciphertext []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +60,8 @@ func (lib *AesLib) DecryptCFB(ciphertext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) EncryptCBC(plaintext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(lib.secKey)
+func (lib *AesLib) EncryptCBC(key []byte, plaintext []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +80,8 @@ func (lib *AesLib) EncryptCBC(plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) DecryptCBC(ciphertext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(lib.secKey)
+func (lib *AesLib) DecryptCBC(key []byte, ciphertext []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}

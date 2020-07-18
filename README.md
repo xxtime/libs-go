@@ -34,18 +34,19 @@ log.Println(result.Message)
 
 ## AES
 ```golang
-libsAes := libsgo.NewAesLib()
-libsAes.SetSecretKey([]byte("ceb50761f4c378e1bc2f8a7585fb572d"))
+key := []byte("ceb50761f4c378e1bc2f8a7585fb572d")
 text := []byte("this is test data")
 
+libsAes := libsgo.NewAesLib()
+
 // encrypt
-ciphertext, err := libsAes.EncryptCBC(text)
+ciphertext, err := libsAes.EncryptCBC(key, text)
 if err != nil {
 	fmt.Println(err)
 }
 
 // decrypt
-plaintext, err := libsAes.DecryptCBC(ciphertext)
+plaintext, err := libsAes.DecryptCBC(key, ciphertext)
 if err != nil {
 	fmt.Println(err)
 }
