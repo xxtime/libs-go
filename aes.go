@@ -100,7 +100,7 @@ func (lib *AesLib) DecryptCBC(key []byte, ciphertext []byte) ([]byte, error) {
 	mode := cipher.NewCBCDecrypter(block, iv)
 	mode.CryptBlocks(ciphertext, ciphertext) // CryptBlocks can work in-place if the two arguments are the same.
 
-	return pkcs7UnPadding(ciphertext), nil
+	return pkcs7UnPadding(ciphertext, aes.BlockSize)
 }
 
 func pkcs7Padding(data []byte, blockSize int) []byte {
@@ -109,8 +109,11 @@ func pkcs7Padding(data []byte, blockSize int) []byte {
 	return append(data, padtext...)
 }
 
-func pkcs7UnPadding(data []byte) []byte {
+func pkcs7UnPadding(data []byte, blockSize int) ([]byte, error) {
 	length := len(data)
 	unpadding := int(data[length-1])
-	return data[:(length - unpadding)]
+	if unpadding > blockSize {
+		return nil, errors.New("aes error padding")
+	}
+	return data[:(length - unpadding)], nil
 }
