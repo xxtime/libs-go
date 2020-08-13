@@ -6,6 +6,9 @@ go get github.com/zlabwork/libsgo
 
 ## HTTP DEMO
 ```golang
+// if you wanna use a proxy
+// os.Setenv("HTTP_PROXY", "http://127.0.0.1:1080")
+
 var libsHttp = libsgo.NewHttpLib()
 resp, err := libsHttp.RequestGet("http://localhost")
 if err != nil {
@@ -107,4 +110,5 @@ log.Println("plaintext:", string(plaintext))
 
 
 ## Tools
-[Convert text between GBK and UTF8](http://mengqi.info/html/2015/201507071345-using-golang-to-convert-text-between-gbk-and-utf-8.html) - http://golang.org/x/text
+[Convert text between GBK and UTF8](http://mengqi.info/html/2015/201507071345-using-golang-to-convert-text-between-gbk-and-utf-8.html) - http://golang.org/x/text  
+[json to go](https://mholt.github.io/json-to-go/) - convert json to go struct type  
