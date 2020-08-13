@@ -1,14 +1,14 @@
 package libsgo
 
 import (
-	"errors"
-	"encoding/pem"
 	"crypto"
-	"crypto/rsa"
 	"crypto/rand"
-	"crypto/x509"
+	"crypto/rsa"
 	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/x509"
+	"encoding/pem"
+	"errors"
 )
 
 func NewRsaLib() *RsaLib {

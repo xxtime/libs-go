@@ -104,3 +104,7 @@ if err != nil {
 }
 log.Println("plaintext:", string(plaintext))
 ```
+
+
+## Tools
+[Convert text between GBK and UTF8](http://mengqi.info/html/2015/201507071345-using-golang-to-convert-text-between-gbk-and-utf-8.html) - http://golang.org/x/text

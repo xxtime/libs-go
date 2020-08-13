@@ -1,12 +1,12 @@
 package libsgo
 
 import (
-	"io"
 	"bytes"
-	"errors"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"errors"
+	"io"
 )
 
 /**
