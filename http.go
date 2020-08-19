@@ -1,6 +1,7 @@
 package libsgo
 
 import (
+	"bytes"
 	"net/http"
 	"net/url"
 	"strings"
@@ -20,7 +21,7 @@ type HttpLib struct {
 
 func (lib *HttpLib) RequestGet(urlAddress string) (*http.Response, error) {
 	// 准备
-	req, err := http.NewRequest("GET", urlAddress, strings.NewReader(""))
+	req, err := http.NewRequest("GET", urlAddress, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -66,6 +67,30 @@ func (lib *HttpLib) RequestPost(urlAddress string, param map[string]string) (*ht
 	return resp, nil
 }
 
+func (lib *HttpLib) RequestRaw(method string, urlAddress string, httpRawBody []byte) (*http.Response, error) {
+	// 1.
+	req, err := http.NewRequest(strings.ToUpper(method), urlAddress, bytes.NewReader(httpRawBody))
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. set header
+	for k, v := range lib.GetHeaders() {
+		req.Header.Set(string(k), v)
+	}
+
+	// 3.
+	client := &http.Client{Timeout: lib.timeout}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	// 4.
+	// defer resp.Body.Close()
+	return resp, nil
+}
+
 func (lib *HttpLib) SetHeaders(headers map[string]string) {
 	lib.headers = headers
 }
@@ -74,7 +99,7 @@ func (lib *HttpLib) GetHeaders() map[string]string {
 	headers := make(map[string]string)
 	headers["Accept"] = "*/*"
 	headers["Content-Type"] = "application/x-www-form-urlencoded"
-	headers["User-Agent"] = "zLabHttp/1.2"
+	headers["User-Agent"] = "zLabHttp/1.3"
 	for k, v := range lib.headers {
 		headers[k] = v
 	}
