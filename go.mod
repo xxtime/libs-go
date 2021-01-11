@@ -1,3 +1,3 @@
-module github.com/zlabwork/libsgo
+module github.com/zlabwork/go-zlibs
 
 go 1.14

@@ -1,4 +1,4 @@
-package libsgo
+package zlibs
 
 import (
 	"bytes"

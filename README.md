@@ -1,6 +1,6 @@
 ## INSTALL
 ```bash
-go get github.com/zlabwork/libsgo
+go get github.com/zlabwork/go-zlibs
 ```
 
 
@@ -9,7 +9,7 @@ go get github.com/zlabwork/libsgo
 // if you wanna use a proxy
 // os.Setenv("HTTP_PROXY", "http://127.0.0.1:1080")
 
-var libsHttp = libsgo.NewHttpLib()
+var libsHttp = zlibs.NewHttpLib()
 resp, err := libsHttp.RequestGet("http://localhost")
 if err != nil {
     log.Fatal(err)
@@ -40,7 +40,7 @@ log.Println(result.Message)
 key := []byte("ceb50761f4c378e1bc2f8a7585fb572d")
 text := []byte("this is test data")
 
-libsAes := libsgo.NewAesLib()
+libsAes := zlibs.NewAesLib()
 
 // encrypt
 ciphertext, err := libsAes.EncryptCBC(key, text)
@@ -89,7 +89,7 @@ tbI09KjgVeZ/ZI8BN6PkyM7D5lYZf8N5tW0JEANR+rzZ
 testData := []byte("this is test data")
 
 // set keys
-libsRsa := libsgo.NewRsaLib()
+libsRsa := zlibs.NewRsaLib()
 libsRsa.SetPrivateKey(privateKey)
 libsRsa.SetPublicKey(publicKey)
 

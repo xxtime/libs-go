@@ -1,4 +1,4 @@
-package libsgo
+package zlibs
 
 const (
 	OPENSSL_PKCS1_PADDING      int = 1
