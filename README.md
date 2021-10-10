@@ -45,13 +45,13 @@ aes := zlibs.NewAesLib()
 // encrypt
 ciphertext, err := aes.Encrypt(key, text, zlibs.CBCCipher)
 if err != nil {
-fmt.Println(err)
+    fmt.Println(err)
 }
 
 // decrypt
 plaintext, err := aes.Decrypt(key, ciphertext, zlibs.CBCCipher)
 if err != nil {
-fmt.Println(err)
+    fmt.Println(err)
 }
 fmt.Println(string(plaintext))
 ```
