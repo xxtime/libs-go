@@ -40,18 +40,18 @@ log.Println(result.Message)
 key := []byte("ceb50761f4c378e1bc2f8a7585fb572d")
 text := []byte("this is test data")
 
-libsAes := zlibs.NewAesLib()
+aes := zlibs.NewAesLib()
 
 // encrypt
-ciphertext, err := libsAes.EncryptCBC(key, text)
+ciphertext, err := aes.Encrypt(key, text, zlibs.CBCCipher)
 if err != nil {
-	fmt.Println(err)
+fmt.Println(err)
 }
 
 // decrypt
-plaintext, err := libsAes.DecryptCBC(key, ciphertext)
+plaintext, err := aes.Decrypt(key, ciphertext, zlibs.CBCCipher)
 if err != nil {
-	fmt.Println(err)
+fmt.Println(err)
 }
 fmt.Println(string(plaintext))
 ```

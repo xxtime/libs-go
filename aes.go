@@ -6,7 +6,15 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"errors"
+	"fmt"
 	"io"
+)
+
+type Cipher int
+
+const (
+	CBCCipher Cipher = iota
+	CFBCipher
 )
 
 /**
@@ -23,7 +31,27 @@ func NewAesLib() *AesLib {
 type AesLib struct {
 }
 
-func (lib *AesLib) EncryptCFB(key []byte, plaintext []byte) ([]byte, error) {
+func (lib *AesLib) Encrypt(key []byte, plaintext []byte, cipher Cipher) ([]byte, error) {
+	if cipher == CBCCipher {
+		return lib.encryptCBC(key, plaintext)
+	}
+	if cipher == CFBCipher {
+		return lib.encryptCFB(key, plaintext)
+	}
+	return nil, fmt.Errorf("error cipher")
+}
+
+func (lib *AesLib) Decrypt(key []byte, ciphertext []byte, cipher Cipher) ([]byte, error) {
+	if cipher == CBCCipher {
+		return lib.decryptCBC(key, ciphertext)
+	}
+	if cipher == CFBCipher {
+		return lib.decryptCFB(key, ciphertext)
+	}
+	return nil, fmt.Errorf("error cipher")
+}
+
+func (lib *AesLib) encryptCFB(key []byte, plaintext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -41,7 +69,7 @@ func (lib *AesLib) EncryptCFB(key []byte, plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) DecryptCFB(key []byte, ciphertext []byte) ([]byte, error) {
+func (lib *AesLib) decryptCFB(key []byte, ciphertext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -60,7 +88,7 @@ func (lib *AesLib) DecryptCFB(key []byte, ciphertext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) EncryptCBC(key []byte, plaintext []byte) ([]byte, error) {
+func (lib *AesLib) encryptCBC(key []byte, plaintext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -80,7 +108,7 @@ func (lib *AesLib) EncryptCBC(key []byte, plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) DecryptCBC(key []byte, ciphertext []byte) ([]byte, error) {
+func (lib *AesLib) decryptCBC(key []byte, ciphertext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
