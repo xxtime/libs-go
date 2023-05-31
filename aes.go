@@ -33,25 +33,25 @@ type AesLib struct {
 
 func (lib *AesLib) Encrypt(key []byte, plaintext []byte, cipher Cipher) ([]byte, error) {
 	if cipher == CBCCipher {
-		return lib.encryptCBC(key, plaintext)
+		return lib.cbcEncrypt(key, plaintext)
 	}
 	if cipher == CFBCipher {
-		return lib.encryptCFB(key, plaintext)
+		return lib.cfbEncrypt(key, plaintext)
 	}
 	return nil, fmt.Errorf("error cipher")
 }
 
 func (lib *AesLib) Decrypt(key []byte, ciphertext []byte, cipher Cipher) ([]byte, error) {
 	if cipher == CBCCipher {
-		return lib.decryptCBC(key, ciphertext)
+		return lib.cbcDecrypt(key, ciphertext)
 	}
 	if cipher == CFBCipher {
-		return lib.decryptCFB(key, ciphertext)
+		return lib.cfbDecrypt(key, ciphertext)
 	}
 	return nil, fmt.Errorf("error cipher")
 }
 
-func (lib *AesLib) encryptCFB(key []byte, plaintext []byte) ([]byte, error) {
+func (lib *AesLib) cfbEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (lib *AesLib) encryptCFB(key []byte, plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) decryptCFB(key []byte, ciphertext []byte) ([]byte, error) {
+func (lib *AesLib) cfbDecrypt(key []byte, ciphertext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (lib *AesLib) decryptCFB(key []byte, ciphertext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) encryptCBC(key []byte, plaintext []byte) ([]byte, error) {
+func (lib *AesLib) cbcEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (lib *AesLib) encryptCBC(key []byte, plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (lib *AesLib) decryptCBC(key []byte, ciphertext []byte) ([]byte, error) {
+func (lib *AesLib) cbcDecrypt(key []byte, ciphertext []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
